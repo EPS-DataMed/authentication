@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, TIMESTAMP, JSON, CheckConstraint, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, TIMESTAMP, JSON, CheckConstraint
 from sqlalchemy.sql.expression import text
 from .database import Base
 
