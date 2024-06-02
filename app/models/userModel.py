@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime, TIMESTAMP, JSON, CheckConstraint
 from sqlalchemy.sql.expression import text
-from .database import Base
+from ..database import Base
 
 
 class Usuario(Base):
