@@ -12,7 +12,7 @@ router = APIRouter(
 
 # Recuperar Usuario pelo ID
 @router.get("/{usuario_id}", response_model=userSchema.UsuarioOut)
-def read_usuario(usuario_id: int, db: Session = Depends(get_db)):
+def read_usuario(usuario_id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
     db_usuario = db.query(userModel.Usuario).filter(userModel.Usuario.id == usuario_id).first()
     if db_usuario is None:
         raise HTTPException(status_code=404, detail="Usuario not found")
@@ -20,6 +20,6 @@ def read_usuario(usuario_id: int, db: Session = Depends(get_db)):
 
 # Recuperar todos os Usuarios
 @router.get("/", response_model=list[userSchema.UsuarioOut])
-def read_usuarios(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+def read_usuarios(db: Session = Depends(get_db)):
     usuarios = db.query(userModel.Usuario).all()
     return usuarios

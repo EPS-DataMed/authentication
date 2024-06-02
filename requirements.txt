@@ -7,4 +7,5 @@ python-dotenv
 pytest
 pytest-cov
 requests
-bcrypt==4.1
+bcrypt
+pyjwt
