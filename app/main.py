@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from .models import userModel
-from .routers import user, auth
-from .database import engine, Base
+
+from .database import Base, engine
+from .routers import auth, user
 
 Base.metadata.create_all(bind=engine)
 
