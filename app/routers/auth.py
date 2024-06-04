@@ -5,7 +5,10 @@ from sqlalchemy.orm import Session
 from ..models import userModel
 from .. import database, utils, oauth2
 
-router = APIRouter(tags=["Authentication"])
+router = APIRouter(
+    prefix="/auth",
+    tags=["Authentication"]
+)
 
 @router.post("/login")
 def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(database.get_db)):
