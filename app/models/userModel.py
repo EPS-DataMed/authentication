@@ -14,5 +14,3 @@ class Usuario(Base):
     data_nascimento = Column(Date, nullable=False)
     sexo_biologico = Column(String(1), CheckConstraint("sexo_biologico IN ('M', 'F')"), nullable=False)
     data_criacao = Column(DateTime, default=func.now())
-    formulario = Column(JSON)
-    status_formulario = Column(String(20), CheckConstraint("status_formulario IN ('Preenchido', 'Em andamento', 'Não iniciado')"), default='Não iniciado')
