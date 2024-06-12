@@ -7,7 +7,7 @@ from ..schemas import userSchema
 from ..utils import hash_password
 
 router = APIRouter(
-    prefix="/usuarios",
+    prefix="/users",
     tags=["usuarios"],
 )
 
