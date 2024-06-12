@@ -3,14 +3,13 @@ from sqlalchemy.sql import func
 
 from ..database import Base
 
-
 class Usuario(Base):
-    __tablename__ = "usuarios"
+    __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    nome_completo = Column(String, nullable=False)
+    full_name = Column(String, nullable=False)
     email = Column(String, unique=True, nullable=False)
-    senha = Column(String, nullable=False)
-    data_nascimento = Column(Date, nullable=False)
-    sexo_biologico = Column(String(1), CheckConstraint("sexo_biologico IN ('M', 'F')"), nullable=False)
-    data_criacao = Column(DateTime, default=func.now())
+    password = Column(String, nullable=False)
+    birth_date = Column(Date, nullable=False)
+    biological_sex = Column(String(1), CheckConstraint("biological_sex IN ('M', 'F')"), nullable=False)
+    creation_date = Column(DateTime, default=func.now())

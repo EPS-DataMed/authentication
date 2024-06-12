@@ -3,11 +3,11 @@ from pydantic import BaseModel, EmailStr, Field
 
 class UsuarioOut(BaseModel):
     id: int
-    nome_completo: str
+    full_name: str
     email: EmailStr
-    data_nascimento: date
-    sexo_biologico: str
-    data_criacao: datetime
+    birth_date: date
+    biological_sex: str
+    creation_date: datetime
 
     class Config:
         orm_mode = True
@@ -16,21 +16,21 @@ class TokenData(BaseModel):
     user_id: int = None
 
 class UsuarioBase(BaseModel):
-    nome_completo: str = Field(..., max_length=255)
+    full_name: str = Field(..., max_length=255)
     email: EmailStr
-    data_nascimento: date
-    sexo_biologico: str = Field(..., max_length=1, pattern='^(M|F)$')
+    birth_date: date
+    biological_sex: str = Field(..., max_length=1, pattern='^(M|F)$')
 
 class UsuarioCreate(UsuarioBase):
-    senha: str = Field(..., min_length=6)
+    password: str = Field(..., min_length=6)
 
 class UsuarioUpdate(UsuarioBase):
     pass
 
 class Usuario(UsuarioBase):
     id: int
-    data_criacao: datetime
-    senha: str
+    creation_date: datetime
+    password: str
 
     class Config:
         orm_mode = True
