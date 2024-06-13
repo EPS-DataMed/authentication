@@ -7,11 +7,11 @@ from ..schemas import userSchema
 from ..utils import hash_password
 
 router = APIRouter(
-    prefix="/users",
+    prefix="/auth",
     tags=["usuarios"],
 )
 
-@router.post("/", response_model=userSchema.Usuario)
+@router.post("/users", response_model=userSchema.Usuario)
 def create_usuario(usuario: userSchema.UsuarioCreate, db: Session = Depends(get_db)):
     existing_user = db.query(userModel.Usuario).filter(userModel.Usuario.email == usuario.email).first()
 
