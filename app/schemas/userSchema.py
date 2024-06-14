@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from pydantic import BaseModel, EmailStr, Field
 
-class UsuarioOut(BaseModel):
+class UserOut(BaseModel):
     id: int
     full_name: str
     email: EmailStr
@@ -15,19 +15,19 @@ class UsuarioOut(BaseModel):
 class TokenData(BaseModel):
     user_id: int = None
 
-class UsuarioBase(BaseModel):
+class UserBase(BaseModel):
     full_name: str = Field(..., max_length=255)
     email: EmailStr
     birth_date: date
     biological_sex: str = Field(..., max_length=1, pattern='^(M|F)$')
 
-class UsuarioCreate(UsuarioBase):
+class UserCreate(UserBase):
     password: str = Field(..., min_length=6)
 
-class UsuarioUpdate(UsuarioBase):
+class UserUpdate(UserBase):
     pass
 
-class Usuario(UsuarioBase):
+class User(UserBase):
     id: int
     creation_date: datetime
     password: str

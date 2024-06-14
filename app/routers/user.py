@@ -8,26 +8,26 @@ from ..utils import hash_password
 
 router = APIRouter(
     prefix="/auth",
-    tags=["usuarios"],
+    tags=["Usuarios"],
 )
 
-@router.post("/users", response_model=userSchema.Usuario)
-def create_usuario(usuario: userSchema.UsuarioCreate, db: Session = Depends(get_db)):
-    existing_user = db.query(userModel.Usuario).filter(userModel.Usuario.email == usuario.email).first()
+@router.post("/users", response_model=userSchema.User)
+def create_user(User: userSchema.UserCreate, db: Session = Depends(get_db)):
+    existing_user = db.query(userModel.User).filter(userModel.User.email == User.email).first()
 
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    hashed_password = hash_password(usuario.password)
+    hashed_password = hash_password(User.password)
 
-    db_usuario = userModel.Usuario(
-        full_name=usuario.full_name,
-        email=usuario.email,
+    db_User = userModel.User(
+        full_name=User.full_name,
+        email=User.email,
         password=hashed_password,
-        birth_date=usuario.birth_date,
-        biological_sex=usuario.biological_sex,
+        birth_date=User.birth_date,
+        biological_sex=User.biological_sex,
     )
 
-    db.add(db_usuario)
+    db.add(db_User)
     db.commit()
-    db.refresh(db_usuario)
-    return db_usuario
+    db.refresh(db_User)
+    return db_User
