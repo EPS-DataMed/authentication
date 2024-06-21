@@ -1,9 +1,34 @@
-from passlib.context import CryptContext
+import requests
+import os
+from fastapi import HTTPException
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+def verify_password(plain_password: str, decrypted_password: str) -> bool:
+    return plain_password == decrypted_password
 
-def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+def decrypt_password(encrypted_password: str) -> str:
+    url = os.getenv("URL_DECRYPT")
+    private_key = os.getenv("PRIVATE_KEY")
+    data = {
+        "message": encrypted_password,
+        "private_key": private_key,
+    }
+    response = requests.post(url, json=data)
+    
+    if response.status_code != 200:
+        raise HTTPException(status_code=500, detail="Error decrypting password")
+    
+    return response.json()["decrypted_message"]
 
-def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
+def encrypt_password(password: str) -> str:
+    url = os.getenv("URL_CYPHER")
+    public_key = os.getenv("PUBLIC_KEY")
+    data = {
+        "message": password,
+        "public_key": public_key,
+    }
+    response = requests.post(url, json=data)
+    
+    if response.status_code != 200:
+        raise HTTPException(status_code=500, detail="Error encrypting password")
+    
+    return response.json()["encrypted_message"]

@@ -1,30 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-import requests
-import os
 
 from ..database import get_db
 from ..models import userModel
 from ..schemas import userSchema
+from .. import utils
 
 router = APIRouter(
     prefix="/auth",
     tags=["Usuarios"],
 )
-
-def encrypt_password(password: str) -> str:
-    url = os.getenv("URL_CYPHER")
-    public_key = os.getenv("PUBLIC_KEY")
-    data = {
-        "message": password,
-        "public_key": public_key,
-    }
-    response = requests.post(url, json=data)
-    
-    if response.status_code != 200:
-        raise HTTPException(status_code=500, detail="Error encrypting password")
-    
-    return response.json()["encrypted_message"]
 
 @router.post("/users", response_model=userSchema.User)
 def create_user(User: userSchema.UserCreate, db: Session = Depends(get_db)):
@@ -33,7 +18,7 @@ def create_user(User: userSchema.UserCreate, db: Session = Depends(get_db)):
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     
-    encrypted_password = encrypt_password(User.password)
+    encrypted_password = utils.encrypt_password(User.password)
 
     db_User = userModel.User(
         full_name=User.full_name,
@@ -47,3 +32,29 @@ def create_user(User: userSchema.UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_User)
     return db_User
+
+@router.put("/users/{user_id}/password", response_model=userSchema.User)
+def update_password(user_id: int, new_password: userSchema.UserPasswordUpdate, db: Session = Depends(get_db)):
+    user = db.query(userModel.User).filter(userModel.User.id == user_id).first()
+
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    encrypted_password = utils.encrypt_password(new_password.password)
+
+    user.password = encrypted_password
+    db.commit()
+    db.refresh(user)
+
+    return user
+
+@router.post("/users/{user_id}/compare-password", response_model=bool)
+def compare_password(user_id: int, password: str, db: Session = Depends(get_db)):
+    user = db.query(userModel.User).filter(userModel.User.id == user_id).first()
+
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    decrypted_password = utils.decrypt_password(user.password)
+
+    return decrypted_password == password
