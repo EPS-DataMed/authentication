@@ -27,9 +27,19 @@ class UserCreate(UserBase):
 class UserUpdate(UserBase):
     pass
 
-class User(UserBase):
+class UserPasswordUpdate(BaseModel):
+    password: str = Field(..., min_length=6)
+
+class UserPasswordCompare(BaseModel):
+    password: str = Field(..., min_length=6)
+
+class User(BaseModel):
     id: int
     creation_date: datetime
+    full_name: str
+    email: EmailStr
+    birth_date: date
+    biological_sex: str
     password: str
 
     class Config:

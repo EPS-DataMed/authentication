@@ -15,10 +15,12 @@ def create_doctor(doctor: doctorSchema.DoctorCreate, db: Session = Depends(get_d
     db_user = db.query(userModel.User).filter(userModel.User.id == doctor.user_id).first()
     if not db_user:
         raise HTTPException(status_code=400, detail="Associated user not found")
+    
     existing_doctor = db.query(doctorModel.Doctor).filter(doctorModel.Doctor.user_id == doctor.user_id).first()
     if existing_doctor:
         raise HTTPException(status_code=400, detail="Doctor already registered")
-    db_doctor = doctorModel.Doctor(**doctor.model_dump())
+    
+    db_doctor = doctorModel.Doctor(**doctor.dict())
     db.add(db_doctor)
     db.commit()
     db.refresh(db_doctor)
