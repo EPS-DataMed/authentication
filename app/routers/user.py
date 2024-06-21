@@ -1,15 +1,30 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+import requests
+import os
 
 from ..database import get_db
 from ..models import userModel
 from ..schemas import userSchema
-from ..utils import hash_password
 
 router = APIRouter(
     prefix="/auth",
     tags=["Usuarios"],
 )
+
+def encrypt_password(password: str) -> str:
+    url = os.getenv("URL_CYPHER")
+    public_key = os.getenv("PUBLIC_KEY")
+    data = {
+        "message": password,
+        "public_key": public_key,
+    }
+    response = requests.post(url, json=data)
+    
+    if response.status_code != 200:
+        raise HTTPException(status_code=500, detail="Error encrypting password")
+    
+    return response.json()["encrypted_message"]
 
 @router.post("/users", response_model=userSchema.User)
 def create_user(User: userSchema.UserCreate, db: Session = Depends(get_db)):
@@ -17,12 +32,13 @@ def create_user(User: userSchema.UserCreate, db: Session = Depends(get_db)):
 
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    hashed_password = hash_password(User.password)
+    
+    encrypted_password = encrypt_password(User.password)
 
     db_User = userModel.User(
         full_name=User.full_name,
         email=User.email,
-        password=hashed_password,
+        password=encrypted_password,
         birth_date=User.birth_date,
         biological_sex=User.biological_sex,
     )

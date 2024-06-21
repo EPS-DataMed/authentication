@@ -10,3 +10,4 @@ requests
 bcrypt
 pyjwt
 passlib
+requests
