@@ -49,7 +49,7 @@ def update_password(user_id: int, new_password: userSchema.UserPasswordUpdate, d
     return user
 
 @router.post("/users/{user_id}/compare-password", response_model=bool)
-def compare_password(user_id: int, password: str, db: Session = Depends(get_db)):
+def compare_password(user_id: int, password_data: userSchema.UserPasswordCompare, db: Session = Depends(get_db)):
     user = db.query(userModel.User).filter(userModel.User.id == user_id).first()
 
     if user is None:
@@ -57,4 +57,4 @@ def compare_password(user_id: int, password: str, db: Session = Depends(get_db))
 
     decrypted_password = utils.decrypt_password(user.password)
 
-    return decrypted_password == password
+    return decrypted_password == password_data.password

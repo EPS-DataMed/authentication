@@ -1,10 +1,11 @@
+
 from sqlalchemy import JSON, CheckConstraint, Column, Date, DateTime, Integer,String
 from sqlalchemy.sql import func
-
+from sqlalchemy.orm import relationship
 from ..database import Base
 
 class User(Base):
-    __tablename__ = "users"
+    __tablename__ = "Users"
 
     id = Column(Integer, primary_key=True, index=True)
     full_name = Column(String, nullable=False)
@@ -13,3 +14,5 @@ class User(Base):
     birth_date = Column(Date, nullable=False)
     biological_sex = Column(String(1), CheckConstraint("biological_sex IN ('M', 'F')"), nullable=False)
     creation_date = Column(DateTime, default=func.now())
+
+    doctors = relationship("Doctor", back_populates="user")
