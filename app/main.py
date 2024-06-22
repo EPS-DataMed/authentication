@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .database import Base, engine
-from .routers import auth, user, doctor
+from .routers import auth, user, doctor, email
 
 Base.metadata.create_all(bind=engine)
 
@@ -24,6 +24,7 @@ app.add_middleware(
 app.include_router(user.router)
 app.include_router(auth.router)
 app.include_router(doctor.router)
+app.include_router(email.router)
 
 @app.get("/")
 def root():

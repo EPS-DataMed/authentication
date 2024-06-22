@@ -9,9 +9,6 @@ class UserOut(BaseModel):
     biological_sex: str
     creation_date: datetime
 
-    class Config:
-        orm_mode = True
-
 class TokenData(BaseModel):
     user_id: int = None
 
@@ -41,6 +38,3 @@ class User(BaseModel):
     birth_date: date
     biological_sex: str
     password: str
-
-    class Config:
-        orm_mode = True

@@ -9,6 +9,3 @@ class DoctorCreate(DoctorBase):
 
 class Doctor(DoctorBase):
     user_id: int
-
-    class Config:
-        orm_mode = True
