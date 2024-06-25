@@ -36,8 +36,8 @@ async def forgot_password(request: emailSchema.EmailSchema, db: Session = Depend
         "expires": str(datetime.utcnow() + timedelta(hours=24))
     }
 
-    reset_code = jwt.encode(token_data, os.getenv("SECRET_KEY"), algorithm=os.getenv("ALGORITHM"))
-    url_safe_token = base64.urlsafe_b64encode(reset_code.encode()).decode().rstrip('=')
+    reset_token = jwt.encode(token_data, os.getenv("SECRET_KEY"), algorithm=os.getenv("ALGORITHM"))
+    url_safe_token = base64.urlsafe_b64encode(reset_token.encode()).decode().rstrip('=')
 
     print(url_safe_token)
     html = """
@@ -50,13 +50,13 @@ async def forgot_password(request: emailSchema.EmailSchema, db: Session = Depend
         <p>Olá, {0}!</p>
         <p>Recebemos uma solicitação de recuperação de senha para sua conta.</p>
         <p>Para redefinir sua senha, clique no link abaixo:</p>
-        <a href="{1}/reset-password?code={2}">Recuperar senha</a>
+        <a href="{1}/auth/password/{2}/{3}/">Recuperar senha</a>
         <p>Para a sua segurança o link expira em 30 minutos.</p>
         <p>Se você não solicitou a recuperação de senha, ignore este e-mail.</p>
     <div>
     </body>
     </html>
-    """.format(existing_user.full_name, os.getenv("FRONTEND_URL"), url_safe_token)
+    """.format(existing_user.full_name, os.getenv("FRONTEND_URL"), existing_user.id, url_safe_token)
 
     message = email.message.Message()
     message["Subject"] = "Recuperação de senha"
