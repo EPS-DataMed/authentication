@@ -2,7 +2,7 @@ name: Build
 on:
   push:
     branches:
-      - feat/sonar_cloud
+      - main
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
@@ -22,7 +22,17 @@ jobs:
       - name: Run tox
         run: tox -e py
         env:
+          ACCESS_TOKEN_EXPIRE_MINUTES: ${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}
+          ALGORITHM: ${{ secrets.ALGORITHM }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          PUBLIC_KEY: ${{ secrets.PUBLIC_KEY }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          URL_CYPHER: ${{ secrets.URL_CYPHER }}
+          URL_DECRYPT: ${{ secrets.URL_DECRYPT }}
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
