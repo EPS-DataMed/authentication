@@ -2,6 +2,7 @@ import os
 import smtplib
 import jwt
 import email.message
+import base64
 
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
@@ -36,6 +37,7 @@ async def forgot_password(request: emailSchema.EmailSchema, db: Session = Depend
     }
 
     reset_code = jwt.encode(token_data, os.getenv("SECRET_KEY"), algorithm=os.getenv("ALGORITHM"))
+    url_safe_token = base64.urlsafe_b64encode(reset_code.encode()).decode().rstrip('=')
     html = """
     <!DOCTYPE html>
     <html>
@@ -52,7 +54,7 @@ async def forgot_password(request: emailSchema.EmailSchema, db: Session = Depend
     <div>
     </body>
     </html>
-    """.format(existing_user.full_name, os.getenv("FRONTEND_URL"), reset_code)
+    """.format(existing_user.full_name, os.getenv("FRONTEND_URL"), url_safe_token)
 
     message = email.message.Message()
     message["Subject"] = "Recuperação de senha"
