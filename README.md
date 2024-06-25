@@ -7,6 +7,10 @@ Serviço do DataMed responsável pelo gerenciamento de autenticação de usuári
 - Python 3.9 ou superior
 - SQLite (ou outro banco de dados de sua escolha)
 
+Lembre-se de criar um arquivo .env com suas informações para que o projeto funcione.
+
+Na pasta base do repositório foi criado um arquivo .env de exemplo para ser seguido.
+
 ## Instalação
 
 1. Clone o repositório:

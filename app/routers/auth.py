@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+from ..utils import decode_and_validate_token
 
 from ..models import userModel
 from .. import database, oauth2, utils
@@ -25,3 +26,9 @@ def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Session =
     access_token = oauth2.create_access_token(data={"user_id": user.id})
 
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+@router.post("/validation-email-token")
+def validate_token(token: str):
+    is_valid = decode_and_validate_token(token)
+    return {"is_valid": is_valid}
