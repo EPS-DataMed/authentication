@@ -33,11 +33,13 @@ async def forgot_password(request: emailSchema.EmailSchema, db: Session = Depend
     
     token_data = {
         "email": request.email,
-        "expires": str(datetime.utcnow() + timedelta(minutes=30))
+        "expires": str(datetime.utcnow() + timedelta(hours=24))
     }
 
     reset_code = jwt.encode(token_data, os.getenv("SECRET_KEY"), algorithm=os.getenv("ALGORITHM"))
     url_safe_token = base64.urlsafe_b64encode(reset_code.encode()).decode().rstrip('=')
+
+    print(url_safe_token)
     html = """
     <!DOCTYPE html>
     <html>
