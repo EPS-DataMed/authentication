@@ -72,6 +72,18 @@ def test_create_user(client, db):
     assert response.status_code == 200
     assert response.json()["email"] == new_user["email"]
 
+# Teste para criação de usuário já existente
+def test_create_user_fail(client, db):
+    new_user = {
+        "full_name": "Test User",
+        "email": "test@example.com",
+        "password": "test_password",
+        "birth_date": "2000-01-01",
+        "biological_sex": "M"
+    }
+    response = client.post("/auth/users", json=new_user)
+    assert response.status_code == 400
+
 # Teste para comparação de senha
 def test_compare_password(client, db):
     user = create_test_user(db)
@@ -83,6 +95,14 @@ def test_compare_password(client, db):
     assert response.json() is True
     db.delete(user)
     db.commit()
+
+# Teste para comparação de senha de usuário inexistente
+def test_compare_password_fail(client, db):
+    password_data = {
+        "password": "test_password"
+    }
+    response = client.post(f"/auth/users/999/compare-password", json=password_data)
+    assert response.status_code == 404
 
 # Teste para atualização de senha
 def test_update_password(client, db):
@@ -96,6 +116,14 @@ def test_update_password(client, db):
     db.delete(user)
     db.commit()
 
+# Teste para atualização de senha de usuário inexistente
+def test_update_password_fail(client):
+    new_password = {
+        "password": "new_test_password"
+    }
+    response = client.put(f"/auth/users/999/password", json=new_password)
+    assert response.status_code == 404
+
 # Teste para recuperação de senha
 def test_forgot_password(client, db):
     user = create_test_user(db)
@@ -107,6 +135,14 @@ def test_forgot_password(client, db):
     assert "Enviamos um e-mail com as instruções para redefinir sua senha." in response.json()["message"]
     db.delete(user)
     db.commit()
+
+# Teste para recuperação de senha de usuário inexistente
+def test_forgot_password_fail(client, db):
+    email_data = {
+        "email": "user@email.com"
+    }
+    response = client.post("/auth/forgot-password", json=email_data)
+    assert response.status_code == 400
 
 # Teste para criação de médico
 def test_create_doctor(client, db):
@@ -121,7 +157,37 @@ def test_create_doctor(client, db):
     db.delete(new_user)
     db.commit()
 
+# Teste para criação de médico com usuário inexistente
+def test_create_doctor_fail(client, db):
+    new_doctor = {
+        "user_id": 999,
+        "crm": "12345",
+        "specialty": "Cardiologia"
+    }
+    response = client.post("/auth/doctors", json=new_doctor)
+    assert response.status_code == 400
+
+# Teste para criação de médico já inexistente
+def test_create_doctor_fail2(client, db):
+    new_doctor = {
+        "user_id": 1,
+        "crm": "12345",
+        "specialty": "Cardiologia"
+    }
+    response = client.post("/auth/doctors", json=new_doctor)
+    assert response.status_code == 400
+
 # Teste de rota de autenticação: /auth/login
 def test_login(client):
     response = client.post("/auth/login", data={"username": "test@example.com", "password": "test_password"})
     assert response.status_code == 200
+
+# Teste de rota de autenticação: /auth/login para usuário inexistente
+def test_login_fail(client):
+    response = client.post("/auth/login", data={"username": "testefail@example.com", "password": "test_password"})
+    assert response.status_code == 403
+
+# Teste de rota de autenticação: /auth/login para senha incorreta
+def test_login_fail2(client):
+    response = client.post("/auth/login", data={"username": "test@example.com", "password": "test_password_fail"})
+    assert response.status_code == 403
