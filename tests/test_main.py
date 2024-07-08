@@ -41,6 +41,11 @@ def client():
     yield client
     app.dependency_overrides.clear()
 
+def test_read_root(client):
+    response = client.get("/")
+    assert response.status_code == 200
+    assert response.json() == {"message": "Welcome to the authentication API"}
+
 # Função de criação de usuário para testes
 def create_test_user(db):
     password = "test_password"
