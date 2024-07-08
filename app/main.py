@@ -28,4 +28,4 @@ app.include_router(email.router)
 
 @app.get("/")
 def root():
-    return {"message": "Hello World"}
+    return {"message": "Welcome to the authentication API"}
